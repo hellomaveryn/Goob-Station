@@ -1,0 +1,410 @@
+
+# Ported from Monolith
+- type: entity
+  id: LightMechMount
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Mech
+    equipmentWhitelist:
+      tags:
+      - LightMechMount
+
+- type: entity
+  id: MediumMechMount
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Mech
+    equipmentWhitelist:
+      tags:
+      - LightMechMount
+      - MediumMechMount
+
+- type: entity
+  id: LightMultiroleMount
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Mech
+    equipmentWhitelist:
+      tags:
+      - MediumMechMount
+      - LightMechMount
+
+- type: entity
+  id: HeavyMechMount
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Mech
+    equipmentWhitelist:
+      tags:
+      - LightMechMount
+      - MediumMechMount
+      - HeavyMechMount
+
+- type: entity
+  id: EWARMechMount
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Mech
+    equipmentWhitelist:
+      tags:
+      - EWARMechMount
+      - LightMechMount
+
+# S2 Mechas
+- type: entity
+  id: BaseAFInterceptor
+  parent: [ BaseMech, LightMechMount ]
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  name: AF-28 "Broadsword"
+  description: One of the first purpose built Armored Frames, made to engage light targets and other Armored Frames.
+  components:
+  - type: Fixtures
+    fixtures: # Custom hitbox
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.9
+        density: 300
+        restitution: 0.0
+        mask:
+        - MobMask
+        layer:
+        - MobLayer
+        - MachineLayer
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    sprite: _Mono/Objects/Specific/Mech/mechaS2.rsi
+    layers:
+    - map: [ "enum.MechVisualLayers.Base" ]
+      state: broadsword
+    - map: ["enum.PaperLabelVisuals.Layer"]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: FootstepModifier
+    footstepSoundCollection:
+      path: /Audio/Mecha/sound_mecha_powerloader_step.ogg
+  - type: Mech
+    baseState: broadsword
+    openState: broadsword-open
+    brokenState: broadsword-broken
+    mechToPilotDamageMultiplier: 0
+    criticalPowerStateSpeedPenalty: 0.75
+    maxEquipmentAmount: 3
+    airtight: true
+    maxIntegrity: 1750
+    pilotWhitelist:
+      components:
+        - HumanoidAppearance
+        - BorgChassis
+    zoom: 1.5, 1.5
+  - type: MeleeWeapon
+    hidden: true
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 25
+        Structural: 260
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 5000
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:ChangeConstructionNodeBehavior
+        node: start
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: RadarConsole
+    followEntity: true
+  - type: Appearance
+  - type: GenericVisualizer
+  # EXTREMELY slow in gravity. Only really good to taxi, and that's about it.
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.75
+    baseSprintSpeed: 1.33
+    baseWeightlessModifier: 60
+  - type: RadarBlip
+    radarColor: "#E3E3E3"
+    scale: 3
+    requireNoGrid: true
+    shape: square
+  - type: Damageable
+    damageModifierSet: MechArmorHeavy
+  - type: Repairable
+    fuelCost: 40
+    doAfterDelay: 30
+  - type: StaticPrice
+    price: 3000
+  - type: Tag
+    tags:
+    - DoorBumpOpener
+    - FootstepSound
+    - Broadsword
+  - type: Prying
+    pryPowered: true
+    speedModifier: 3
+    useSound:
+      path: /Audio/Items/jaws_pry.ogg
+
+- type: entity
+  id: AFInterceptor
+  parent: BaseAFInterceptor
+  components:
+  - type: CanMoveInAir
+  - type: MovementAlwaysTouching
+
+- type: entity
+  id: AFInterceptorBattery
+  parent: AFInterceptor
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCageHigh
+
+#Halberd
+
+- type: entity
+  id: AFInterceptorM
+  parent: [MediumMechMount, AFInterceptor]
+  name: AF-28-M "Halberd"
+  description: A modification of the Broadsword, the Halberd sacrifices light weapon mounts and speed for more armor and medium weapon mounts..
+  components:
+  - type: Mech
+    baseState: broadsword
+    openState: broadsword-open
+    brokenState: broadsword-broken
+    mechToPilotDamageMultiplier: 0
+    criticalPowerStateSpeedPenalty: 0.85
+    maxEquipmentAmount: 3
+    airtight: true
+    maxIntegrity: 2150
+    pilotWhitelist:
+      components:
+        - HumanoidAppearance
+        - BorgChassis
+    zoom: 1.75, 1.75
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 3000
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:ChangeConstructionNodeBehavior
+        node: start
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  # EXTREMELY slow in gravity. Only really good to taxi, and that's about it.
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.75
+    baseSprintSpeed: 1.33
+    baseWeightlessModifier: 50
+  - type: Damageable
+    damageModifierSet: MechArmorHeavy
+  - type: Tag
+    tags:
+    - DoorBumpOpener
+    - FootstepSound
+    - Halberd
+
+#4x4 mechas
+- type: entity
+  id: AFFlail
+  parent: [ BaseMech, HeavyMechMount ]
+  name: ASF-59 "Flail"
+  description: Newest mech on the market, the Armored Strike Frame is built to tackle ship-sized foes with it's oversized weapon mounts. Slow as a pig however, it tacks on generous armor plating to survive it's runs.
+  components:
+  - type: Fixtures
+    fixtures: # Custom hitbox
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 1.4
+        density: 600
+        restitution: 0.0
+        mask:
+        - MobMask
+        layer:
+        - MobLayer
+        - MachineLayer
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    sprite: _Mono/Objects/Specific/Mech/mechaS4.rsi
+    layers:
+    - map: [ "enum.MechVisualLayers.Base" ]
+      state: flail
+    - map: ["enum.PaperLabelVisuals.Layer"]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: FootstepModifier
+    footstepSoundCollection:
+      path: /Audio/Mecha/sound_mecha_powerloader_step.ogg
+  - type: Mech
+    baseState: flail
+    openState: flail-open
+    brokenState: flail-broken
+    mechToPilotDamageMultiplier: 0
+    criticalPowerStateSpeedPenalty: 0.85
+    maxEquipmentAmount: 3
+    airtight: true
+    maxIntegrity: 3000
+    pilotWhitelist:
+      components:
+        - HumanoidAppearance
+        - BorgChassis
+    zoom: 3, 3
+  - type: MeleeWeapon
+    hidden: true
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 50
+        Structural: 550
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 6000
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:ChangeConstructionNodeBehavior
+        node: start
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: RadarConsole
+    followEntity: true
+  - type: Appearance
+  - type: GenericVisualizer
+  - type: CanMoveInAir
+  - type: MovementAlwaysTouching
+  # EXTREMELY slow in gravity. Only really good to taxi, and that's about it. Even worse than S2s
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.5
+    baseSprintSpeed: 1
+    baseWeightlessModifier: 50
+  - type: RadarBlip
+    radarColor: "#E3E3E3"
+    scale: 3
+    requireNoGrid: true
+    shape: square
+  - type: Damageable
+    damageModifierSet: MechArmorHeavy
+  - type: Repairable
+    fuelCost: 60
+    doAfterDelay: 40
+  - type: StaticPrice
+    price: 3000
+  - type: Tag
+    tags:
+    - DoorBumpOpener
+    - FootstepSound
+    - Flail
+  - type: Prying
+    pryPowered: true
+    speedModifier: 5
+    useSound:
+      path: /Audio/Items/jaws_pry.ogg
+
+- type: entity
+  id: AFFlailE
+  parent: [EWARMechMount, AFFlail]
+  name: ASF-59-E "Spyglass"
+  description: An extremely specialized mech based off the Flail Chassis. Uses sophisticated radar systems to provide command and control capabilities, in addition to employing advanced EWAR weaponry.
+  components:
+  - type: Mech
+    baseState: flail
+    openState: flail-open
+    brokenState: flail-broken
+    mechToPilotDamageMultiplier: 0
+    criticalPowerStateSpeedPenalty: 0.85
+    maxEquipmentAmount: 3
+    airtight: true
+    maxIntegrity: 4000
+    pilotWhitelist:
+      components:
+        - HumanoidAppearance
+        - BorgChassis
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 8000
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:ChangeConstructionNodeBehavior
+        node: start
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: RadarConsole
+    followEntity: true
+  # EXTREMELY slow in gravity. Only really good to taxi, and that's about it. Even worse than S2s
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.4
+    baseSprintSpeed: 0.8
+    baseWeightlessModifier: 45
+  - type: Tag
+    tags:
+    - DoorBumpOpener
+    - FootstepSound
+    - Spyglass
+
+- type: entity
+  id: AFMace
+  parent: AFFlail
+  name: ASF-59-B "Mace"
+  description: A haphazard refit, armor plating is stripped off to add oversized boosters to the machine. Due to the power constraints, it can only equip a single weapon, limiting versatilty. Fits Heavy Mounts.
+  components:
+  - type: Mech
+    baseState: flail
+    openState: flail-open
+    brokenState: flail-broken
+    mechToPilotDamageMultiplier: 0
+    criticalPowerStateSpeedPenalty: 0.95
+    maxEquipmentAmount: 1
+    airtight: true
+    maxIntegrity: 2000
+    pilotWhitelist:
+      components:
+        - HumanoidAppearance
+        - BorgChassis
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 4000
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:ChangeConstructionNodeBehavior
+        node: start
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.5
+    baseSprintSpeed: 1.2
+    baseWeightlessModifier: 75
+  - type: Tag
+    tags:
+    - DoorBumpOpener
+    - FootstepSound
+    - Mace
